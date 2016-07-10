@@ -1,0 +1,23 @@
+
+name: AFAIK
+
+description: Main Plugin for the AFAIK Server
+
+author: Patrick97
+website: http://lavahayn.de
+
+main: de.Lavahayn.Main.baseClass
+
+version: 0.1-Blueberry
+
+commands:
+    hochzeit:
+        description: Heirate einen anderen Spieler.
+        aliases: [h]
+        permission: marriage
+        usage: /hochzeit Hilfe
+
+permissions:
+    marriage:
+        default: false
+        description: Gibt einem Spieler die Erlaubnis den Hochzeitsbefehl auszufuehren
