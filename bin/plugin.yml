@@ -19,13 +19,23 @@ commands:
     addNewRecipe:
         description: Adds a recipe to the server.
         aliases: [anr]
-        permission: addNewRecipe
+        permission: recipeManager
         usage: /addNewRecipe
     wipeAllRecipes:
         description: resets all server recipes.
         aliases: [war]
-        permission: wipeAllRecipes
+        permission: recipeManager
         usage: /wipeAllRecipes
+    removeRecipeAt:
+        description: removes the recipe at given index.
+        aliases: [rra]
+        permission: recipeManager
+        usage: /removeRecipeAt <number>
+    listserverrecipes:
+        description: lists all server recipes.
+        aliases: [lsr]
+        permission: recipeManager
+        usage: /listserverrecipes
 permissions:
     marriage:
         default: false

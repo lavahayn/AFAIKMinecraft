@@ -6,10 +6,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
-
-import javax.print.attribute.standard.Chromaticity;
 
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -32,12 +29,13 @@ public class RecipeManager {
 		try {
 			FileOutputStream fileOut = new FileOutputStream(m_Server.getDataFolder() + File.separator + "recipes.bin");
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
-			out.writeObject(m_Server.recipes);
+			out.writeObject(m_Server.m_Recipes);
 			out.close();
 			fileOut.close();
 		} catch (Exception e) {
 			m_Server.Log(Level.WARNING, e.getMessage());
-			m_Server.Log(Level.INFO, "Is the plugin maybe starting the first time?");
+			m_Server.Log(Level.FINEST, e.toString());
+			m_Server.Log(Level.INFO, "plugin starting the first time?");
 		}
 	}
 
@@ -47,16 +45,13 @@ public class RecipeManager {
 			PlayerInventory inventory = ((Player) sender).getInventory();
 			ItemStack secondHandItem = inventory.getItemInOffHand();
 			if (secondHandItem.getType() != Material.AIR) {
-				if (m_Server.recipes == null) {
-					m_Server.recipes = new ArrayList<Recipe>();
+				if (m_Server.m_Recipes == null) {
+					m_Server.m_Recipes = new ArrayList<Recipe>();
 				}
-				m_Server.Log(Level.WARNING, "Created Array List");
 				ShapedRecipe craftingRecipe = new ShapedRecipe(inventory.getItemInOffHand());
 				
-				m_Server.Log(Level.WARNING, "Instanciated Shaped Recipe");
 				craftingRecipe.shape("ABC","DEF","GHI");
 				for (int i = 0; i < 9; i++) {
-					m_Server.Log(Level.WARNING, i + " time");
 					ItemStack currentItem = inventory.getItem(i);
 					Material currentMaterial = null;
 					
@@ -68,7 +63,7 @@ public class RecipeManager {
 					craftingRecipe.setIngredient((char)(i +65), currentMaterial);
 
 				}
-				m_Server.recipes.add(craftingRecipe);
+				m_Server.m_Recipes.add(craftingRecipe);
 
 				m_Server.getServer().addRecipe(craftingRecipe);
 				sender.sendMessage("Ein neues Craftingrezept wurde angelegt");
@@ -87,7 +82,7 @@ public class RecipeManager {
 		} catch (Exception e) {
 			sender.sendMessage(ChatColor.RED + "Während der Ausführung des Befehls ist ein Fehler aufgetreten");
 			m_Server.Log(Level.WARNING, e.getMessage());
-			m_Server.Log(Level.WARNING, e.toString());
+			m_Server.Log(Level.FINEST, e.toString());
 		}
 	}
 
@@ -97,19 +92,20 @@ public class RecipeManager {
 			FileInputStream fileIn = new FileInputStream(m_Server.getDataFolder() + File.separator + "recipes.bin");
 			ObjectInputStream in = new ObjectInputStream(fileIn);
 			Object deserializedList = in.readObject();
-			m_Server.recipes = (List<Recipe>) deserializedList;
+			m_Server.m_Recipes = (ArrayList<Recipe>) deserializedList;
 			in.close();
 			fileIn.close();
 		} catch (Exception e) {
 			m_Server.Log(Level.WARNING, e.getMessage());
+			m_Server.Log(Level.FINEST, e.toString());
 		}
-		for (Recipe recipe : m_Server.recipes) {
+		for (Recipe recipe : m_Server.m_Recipes) {
 			m_Server.getServer().addRecipe(recipe);
 		}
 	}
 
 	public void WipeAllRecipes() {
-		m_Server.recipes.clear();
+		m_Server.m_Recipes.clear();
 		m_Server.getServer().resetRecipes();
 	}
 }
