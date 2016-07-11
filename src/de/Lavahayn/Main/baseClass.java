@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Recipe;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class baseClass extends JavaPlugin {
@@ -29,7 +30,7 @@ public class baseClass extends JavaPlugin {
 	}
 
 	private void Cook() {
-		this.getServer().clearRecipes();
+		this.getServer().resetRecipes();
 		recipeManager.DeserializeRecipes();
 	}
 
@@ -75,6 +76,10 @@ public class baseClass extends JavaPlugin {
 			} else {
 				NotifyOnlyPlayers(sender);
 			}
+		}
+		else if (cmd.getName().equalsIgnoreCase("wipeallrecipes")){
+			blnReturn = true;
+			recipeManager.WipeAllRecipes();
 		}
 		return blnReturn;
 	}

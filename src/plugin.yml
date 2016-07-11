@@ -17,14 +17,22 @@ commands:
         permission: marriage
         usage: /hochzeit Hilfe
     addNewRecipe:
-        description: Marries you to another player.
+        description: Adds a recipe to the server.
         aliases: [anr]
         permission: addNewRecipe
         usage: /addNewRecipe
+    wipeAllRecipes:
+        description: resets all server recipes.
+        aliases: [war]
+        permission: wipeAllRecipes
+        usage: /wipeAllRecipes
 permissions:
     marriage:
         default: false
         description: Grants a player the permission to marry another player
     addNewRecipe:
+        default: false
+        description: Grants a player the permission to add a new recipe
+    wipeAllRecipes:
         default: false
         description: Grants a player the permission to add a new recipe

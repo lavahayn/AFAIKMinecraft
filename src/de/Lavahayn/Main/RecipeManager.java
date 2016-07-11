@@ -5,16 +5,19 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+
+import javax.print.attribute.standard.Chromaticity;
 
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.Recipe;
+import org.bukkit.inventory.ShapedRecipe;
 
 import net.md_5.bungee.api.ChatColor;
 
@@ -38,46 +41,38 @@ public class RecipeManager {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public void AddNewRecipe(CommandSender sender) {
 		try {
 			PlayerInventory inventory = ((Player) sender).getInventory();
-			ItemStack secondHandItem = ((Player) sender).getInventory().getItemInOffHand();
+			ItemStack secondHandItem = inventory.getItemInOffHand();
 			if (secondHandItem.getType() != Material.AIR) {
-				Recipe craftingRecipe = new Recipe();
-				Field[] fields = craftingRecipe.getClass().getFields();
-				for (int i = 0; i < 9; i++) {
-					try {
-						fields[i].set(craftingRecipe, inventory.getItem(i));
-					} catch (Exception e) {
-						m_Server.Log(Level.WARNING, e.getMessage());
-					}
-				}
-				craftingRecipe.result = inventory.getItemInOffHand();
-				boolean blnContinue = true;
 				if (m_Server.recipes == null) {
 					m_Server.recipes = new ArrayList<Recipe>();
 				}
-				m_Server.Log(Level.WARNING, "" + m_Server.recipes.toArray().length);
-				for (int i = 0; i < m_Server.recipes.size(); i++) {
-					Recipe recipe = (Recipe) m_Server.recipes.get(i);
-					if (recipe.upperLeft == craftingRecipe.upperLeft && recipe.upperMiddle == craftingRecipe.upperMiddle
-							&& recipe.upperRight == craftingRecipe.upperRight
-							&& recipe.middleLeft == craftingRecipe.middleLeft
-							&& recipe.middleMiddle == craftingRecipe.middleMiddle
-							&& recipe.middleRight == craftingRecipe.middleRight
-							&& recipe.downerLeft == craftingRecipe.downerLeft
-							&& recipe.downerMiddle == craftingRecipe.downerMiddle
-							&& recipe.downerRight == craftingRecipe.downerRight) {
-						blnContinue = false;
-						continue;
+				m_Server.Log(Level.WARNING, "Created Array List");
+				ShapedRecipe craftingRecipe = new ShapedRecipe(inventory.getItemInOffHand());
+				
+				m_Server.Log(Level.WARNING, "Instanciated Shaped Recipe");
+				craftingRecipe.shape("ABC","DEF","GHI");
+				for (int i = 0; i < 9; i++) {
+					m_Server.Log(Level.WARNING, i + " time");
+					ItemStack currentItem = inventory.getItem(i);
+					Material currentMaterial = null;
+					
+					if (currentItem == null) {
+						currentMaterial = Material.AIR;
+					} else {
+						currentMaterial = Material.getMaterial(currentItem.getTypeId());
 					}
+					craftingRecipe.setIngredient((char)(i +65), currentMaterial);
+
 				}
-				if (blnContinue) {
-					m_Server.recipes.add(craftingRecipe);
-					sender.sendMessage("Ein neues Craftingrezept wurde angelegt");
-				} else {
-					sender.sendMessage("Es existiert bereits ein Rezept, dass aus den angegeben Items besteht");
-				}
+				m_Server.recipes.add(craftingRecipe);
+
+				m_Server.getServer().addRecipe(craftingRecipe);
+				sender.sendMessage("Ein neues Craftingrezept wurde angelegt");
+
 			} else if (secondHandItem.getType() == Material.AIR) {
 				sender.sendMessage(
 						"Du musst ein Item in der Off-Hand halten, dass aus dem Crafting Rezept bestehen soll."
@@ -92,6 +87,7 @@ public class RecipeManager {
 		} catch (Exception e) {
 			sender.sendMessage(ChatColor.RED + "Während der Ausführung des Befehls ist ein Fehler aufgetreten");
 			m_Server.Log(Level.WARNING, e.getMessage());
+			m_Server.Log(Level.WARNING, e.toString());
 		}
 	}
 
@@ -107,5 +103,13 @@ public class RecipeManager {
 		} catch (Exception e) {
 			m_Server.Log(Level.WARNING, e.getMessage());
 		}
+		for (Recipe recipe : m_Server.recipes) {
+			m_Server.getServer().addRecipe(recipe);
+		}
+	}
+
+	public void WipeAllRecipes() {
+		m_Server.recipes.clear();
+		m_Server.getServer().resetRecipes();
 	}
 }
