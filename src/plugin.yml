@@ -12,12 +12,19 @@ version: 0.1-Blueberry
 
 commands:
     hochzeit:
-        description: Heirate einen anderen Spieler.
+        description: Marries you to another player.
         aliases: [h]
         permission: marriage
         usage: /hochzeit Hilfe
-
+    addNewRecipe:
+        description: Marries you to another player.
+        aliases: [anr]
+        permission: addNewRecipe
+        usage: /addNewRecipe
 permissions:
     marriage:
         default: false
-        description: Gibt einem Spieler die Erlaubnis den Hochzeitsbefehl auszufuehren
+        description: Grants a player the permission to marry another player
+    addNewRecipe:
+        default: false
+        description: Grants a player the permission to add a new recipe
